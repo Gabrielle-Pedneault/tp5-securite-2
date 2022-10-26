@@ -48,7 +48,7 @@ namespace Sec.Market.MVC.Controllers
                 if (returnurl == null)
                     return RedirectToAction("Index", "Product");
                 else
-                  return Redirect(returnurl);
+                  return LocalRedirect(returnurl);
 
             }
 
