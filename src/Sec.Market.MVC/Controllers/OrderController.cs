@@ -25,9 +25,19 @@ namespace Sec.Market.MVC.Controllers
         {
             var userId = HttpContext.Session.GetInt32("id");
 
-            if (userId == null)
-                return RedirectToAction("SignIn", "User", new { returnurl = HttpContext.Request.GetDisplayUrl()});
 
+            if (userId == null)
+            {
+                var returnUrl = HttpContext.Request.GetDisplayUrl();
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    return RedirectToAction("SignIn", "User", new { returnUrl });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(UserController.SignIn), "User");
+                }
+            }
             return View(await _orderService.ObtenirSelonUser(userId.Value));
         }
 
@@ -43,7 +53,17 @@ namespace Sec.Market.MVC.Controllers
             var userId = HttpContext.Session.GetInt32("id");
 
             if (userId == null)
-                return RedirectToAction("SignIn", "User", new { returnurl = HttpContext.Request.GetDisplayUrl() });
+            {
+                var returnUrl = HttpContext.Request.GetDisplayUrl();
+                if (Url.IsLocalUrl(returnUrl))
+                {
+                    return RedirectToAction("SignIn", "User", new { returnUrl });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(UserController.SignIn), "User");
+                }
+            }
 
             var product = await _productService.Obtenir(id);
 
@@ -64,13 +84,13 @@ namespace Sec.Market.MVC.Controllers
 
             if (ModelState.IsValid)
             {
-                
-              await _orderService.Ajouter(orderData);
-              return RedirectToAction(nameof(Index));
+
+                await _orderService.Ajouter(orderData);
+                return RedirectToAction(nameof(Index));
             }
-           
+
             return View(orderData);
-            
+
         }
 
         // GET: OrderController/Edit/5
@@ -81,7 +101,7 @@ namespace Sec.Market.MVC.Controllers
 
         // POST: OrderController/Edit/5
         [HttpPost]
-       
+
         public ActionResult Edit(int id, IFormCollection collection)
         {
             try
@@ -102,7 +122,7 @@ namespace Sec.Market.MVC.Controllers
 
         // POST: OrderController/Delete/5
         [HttpPost]
-       
+
         public ActionResult Delete(int id, IFormCollection collection)
         {
             try
